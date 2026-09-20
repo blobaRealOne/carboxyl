@@ -1,0 +1,33 @@
+name: Build Carboxyl Native ARM64
+
+on:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-arm64:
+    name: Build Native AArch64
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libfontconfig1-dev libfreetype6-dev libssl-dev
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Carboxyl (Release)
+        run: cargo build --release
+
+      - name: Upload Executable Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: carboxyl-debian-arm64
+          path: target/release/carboxyl
